@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS News Aggregator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .news-item {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .news-item h2 {
+            margin: 0 0 10px 0;
+        }
+        .news-item p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Latest News</h1>
+    <div id="news"></div>
+    <script>
+        async function fetchNews() {
+            try {
+                const response = await fetch('/api/news/10');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const news = await response.json();
+                const newsContainer = document.getElementById('news');
+                newsContainer.innerHTML = ''; // Clear existing content
+                
+                news.forEach(item => {
+                    const newsItem = document.createElement('div');
+                    newsItem.classList.add('news-item');
+                    newsItem.innerHTML = `
+                        <h2><a href="${item.link}" target="_blank">${item.Title}</a></h2>
+                        <p>${item.description}</p>
+                        <p><small>${new Date(item.pubDate).toLocaleString()}</small></p>
+                    `;
+                    newsContainer.appendChild(newsItem);
+                });
+            } catch (error) {
+                console.error('Failed to fetch news:', error);
+            }
+        }
+
+        fetchNews();
+    </script>
+</body>
+</html>
